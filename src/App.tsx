@@ -15,14 +15,10 @@ export default function App() {
     <div className="flex flex-col min-h-screen">
       <Header toggleSidebar={toggleSidebar} />
       <div className="flex flex-1">
-        <div className="fixed h-screen">
-          <Sideber isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        </div>
-        <div className="flex-1 ml-64">
-          <main className="p-6">
-            <Layouts />
-          </main>
-        </div>
+        <Sideber isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <main className="flex-1 p-6 md:ml-64">
+          <Layouts />
+        </main>
       </div>
     </div>
   );

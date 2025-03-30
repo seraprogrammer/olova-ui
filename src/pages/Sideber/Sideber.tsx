@@ -55,7 +55,7 @@ export default function Sideber({
         />
       )}
       <aside
-        className={`fixed md:static w-64 h-screen overflow-y-auto bg-background z-40 transition-all duration-300 ${sidebarClass}`}
+        className={`fixed md:static w-full md:w-64 h-full min-h-screen overflow-y-auto bg-background z-40 transition-all duration-300 ${sidebarClass}`}
       >
         <div className="p-4">
           <div className="flex items-center justify-between mb-6">
