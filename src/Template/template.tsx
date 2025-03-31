@@ -14,27 +14,53 @@ const CodeExample = ({
   description,
   preview,
   codePath,
+  codeString,
   defaultTab = "preview",
   language = "jsx",
 }: {
   title: string;
   description?: string;
   preview: React.ReactNode;
-  codePath: string;
+  codePath?: string;
+  codeString?: string;
   defaultTab?: "preview" | "code";
   language?: string;
 }) => {
-  const [code, setCode] = useState<string>("");
+  const [code, setCode] = useState<string>(codeString || "");
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<"preview" | "code">(defaultTab);
+  const [isLoading, setIsLoading] = useState(!codeString && !!codePath);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch the code from the markdown file
-    fetch(codePath)
+    // If code is provided directly, use it
+    if (codeString) {
+      setCode(codeString);
+      return;
+    }
+
+    // If no codePath is provided, don't try to fetch
+    if (!codePath) {
+      setCode("// No code provided");
+      setIsLoading(false);
+      return;
+    }
+
+    // Otherwise fetch the code from the file
+    setIsLoading(true);
+    setLoadError(null);
+
+    // Adjust path for Vercel deployment if needed
+    const adjustedPath =
+      process.env.NODE_ENV === "production"
+        ? `${process.env.NEXT_PUBLIC_BASE_PATH || ""}${codePath}`
+        : codePath;
+
+    fetch(adjustedPath)
       .then((response) => {
         if (!response.ok) {
           if (response.status === 404) {
-            throw new Error(`File not found: ${codePath}`);
+            throw new Error(`File not found: ${adjustedPath}`);
           } else {
             throw new Error(
               `Failed to load: ${response.status} ${response.statusText}`
@@ -44,8 +70,10 @@ const CodeExample = ({
         return response.text();
       })
       .then((text) => {
+        setIsLoading(false);
+
         // Extract code blocks from markdown if it's a markdown file
-        if (codePath.endsWith(".md")) {
+        if (codePath?.endsWith(".md")) {
           // Look for code blocks with ```jsx or ```tsx or any specified language
           const codeBlockRegex = new RegExp(
             `\`\`\`(${language}|jsx|tsx)[\\s\\S]*?\`\`\``,
@@ -75,7 +103,6 @@ const CodeExample = ({
 
               setCode(extractedCode);
             } else {
-              console.log("No code blocks found in markdown:", text);
               setCode("// No code blocks found in the markdown file");
             }
           }
@@ -92,9 +119,11 @@ const CodeExample = ({
       })
       .catch((error) => {
         console.error("Error loading code example:", error);
+        setIsLoading(false);
+        setLoadError(error.toString());
         setCode(`// ${error.toString()}`);
       });
-  }, [codePath, language]);
+  }, [codePath, codeString, language]);
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(code);
@@ -219,27 +248,31 @@ const CodeExample = ({
         <TabsContent value="code" className="relative max-w-full">
           <div className="bg-gray-900 text-gray-100 rounded-none p-0 overflow-hidden max-w-full">
             <div className="max-h-[400px] overflow-auto max-w-full">
-              <SyntaxHighlighter
-                language={language}
-                style={vscDarkPlus}
-                customStyle={{
-                  margin: 0,
-                  padding: "1rem",
-                  fontSize: "0.9rem",
-                  lineHeight: 1.5,
-                  borderRadius: 0,
-                  maxWidth: "100%",
-                  overflowX: "hidden",
-                  wordBreak: "break-all",
-                }}
-                wrapLongLines={true}
-                showLineNumbers={true}
-                lineProps={{
-                  style: { whiteSpace: "pre-wrap", wordBreak: "break-all" },
-                }}
-              >
-                {code}
-              </SyntaxHighlighter>
+              {isLoading ? (
+                <div className="p-4 text-center">Loading code example...</div>
+              ) : (
+                <SyntaxHighlighter
+                  language={language}
+                  style={vscDarkPlus}
+                  customStyle={{
+                    margin: 0,
+                    padding: "1rem",
+                    fontSize: "0.9rem",
+                    lineHeight: 1.5,
+                    borderRadius: 0,
+                    maxWidth: "100%",
+                    overflowX: "hidden",
+                    wordBreak: "break-all",
+                  }}
+                  wrapLongLines={true}
+                  showLineNumbers={true}
+                  lineProps={{
+                    style: { whiteSpace: "pre-wrap", wordBreak: "break-all" },
+                  }}
+                >
+                  {code}
+                </SyntaxHighlighter>
+              )}
             </div>
           </div>
         </TabsContent>
