@@ -17,8 +17,7 @@ export default function Sideber({
   // Component list with optional "updated" status
   const components = [
     { name: "Header", path: "/docs/header" },
-    { name: "Autocomplete", path: "/docs/autocomplete" },
-    { name: "Alert", path: "/docs/alert" },
+    { name: "Button", path: "/docs/button" },
   ];
 
   // Close sidebar when clicking outside on mobile
