@@ -15,9 +15,7 @@ export default function App() {
     <div className="flex flex-col min-h-screen">
       <Header toggleSidebar={toggleSidebar} />
       <div className="flex flex-1">
-        <div className="md:w-64 md:flex-shrink-0">
-          <Sideber isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-        </div>
+        <Sideber isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
         <main className="flex-1 p-6">
           <Layouts />
         </main>
