@@ -55,7 +55,21 @@ const CodeExample = ({
 
             setCode(extractedCode);
           } else {
-            setCode("// No code blocks found in the markdown file");
+            // Check if there's any code block regardless of language
+            const anyCodeBlockRegex = /```[\s\S]*?```/g;
+            const anyCodeBlocks = text.match(anyCodeBlockRegex);
+
+            if (anyCodeBlocks && anyCodeBlocks.length > 0) {
+              // Extract content from the first code block found
+              const extractedCode = anyCodeBlocks[0]
+                .replace(/^```\w*\s*/, "")
+                .replace(/```\s*$/, "")
+                .trim();
+
+              setCode(extractedCode);
+            } else {
+              setCode("// No code blocks found in the markdown file");
+            }
           }
         } else {
           // Process the text to ensure it doesn't have extremely long lines
@@ -70,7 +84,9 @@ const CodeExample = ({
       })
       .catch((error) => {
         console.error("Error loading code example:", error);
-        setCode("// Error loading code example");
+        setCode(
+          `// Error loading code example: ${error.message || "Unknown error"}`
+        );
       });
   }, [codePath, language]);
 
