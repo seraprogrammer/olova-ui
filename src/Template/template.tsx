@@ -33,9 +33,13 @@ const CodeExample = ({
     fetch(codePath)
       .then((response) => {
         if (!response.ok) {
-          throw new Error(
-            `Failed to load: ${response.status} ${response.statusText}`
-          );
+          if (response.status === 404) {
+            throw new Error(`File not found: ${codePath}`);
+          } else {
+            throw new Error(
+              `Failed to load: ${response.status} ${response.statusText}`
+            );
+          }
         }
         return response.text();
       })
@@ -65,7 +69,7 @@ const CodeExample = ({
             if (anyCodeBlocks && anyCodeBlocks.length > 0) {
               // Extract content from the first code block found
               const extractedCode = anyCodeBlocks[0]
-                .replace(/^```\s*\w*\s*/, "") // More flexible regex to handle various formats
+                .replace(/^```\s*\w*\s*/, "")
                 .replace(/```\s*$/, "")
                 .trim();
 
@@ -88,7 +92,7 @@ const CodeExample = ({
       })
       .catch((error) => {
         console.error("Error loading code example:", error);
-        setCode(`// Error loading code example: ${error.toString()}`);
+        setCode(`// ${error.toString()}`);
       });
   }, [codePath, language]);
 
