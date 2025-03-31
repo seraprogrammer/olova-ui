@@ -4,9 +4,11 @@ import HeaderThree from "./HeaderThree/HeaderThree";
 import { HeaderOne } from "./HeaderOne/code";
 import { HeaderTwoCode } from "./HeaderTwo/code";
 import { HeaderThreeCode } from "./HeaderThree/code";
-import  HeaderFour  from "./HeaderFour/HeaderFour";
+import HeaderFour from "./HeaderFour/HeaderFour";
 import { HeaderFourCode } from "./HeaderFour/HeaderFourCode";
 import { CodeExample } from "../../Template/template";
+import { HeaderFive } from "./HeaderFive/HeaderFive";
+import { HeaderFiveCode } from "./HeaderFive/HeaderFiveCode";
 
 export default function HeaderDocs() {
   return (
@@ -32,6 +34,11 @@ export default function HeaderDocs() {
           title="🚀 Header Four - Modern Responsive Layout ✨"
           preview={<HeaderFour />}
           code={HeaderFourCode}
+        />
+        <CodeExample
+          title="🚀 Header Five - Modern Responsive Layout ✨"
+          preview={<HeaderFive />}
+          code={HeaderFiveCode}
         />
       </div>
     </div>
