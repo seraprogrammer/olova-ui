@@ -4,7 +4,8 @@ import HeaderThree from "./HeaderThree/HeaderThree";
 import { HeaderOne } from "./HeaderOne/code";
 import { HeaderTwoCode } from "./HeaderTwo/code";
 import { HeaderThreeCode } from "./HeaderThree/code";
-
+import  HeaderFour  from "./HeaderFour/HeaderFour";
+import { HeaderFourCode } from "./HeaderFour/HeaderFourCode";
 import { CodeExample } from "../../Template/template";
 
 export default function HeaderDocs() {
@@ -26,6 +27,11 @@ export default function HeaderDocs() {
           title="🚀 Header Three - Modern Responsive Layout ✨"
           preview={<HeaderThree />}
           code={HeaderThreeCode}
+        />
+        <CodeExample
+          title="🚀 Header Four - Modern Responsive Layout ✨"
+          preview={<HeaderFour />}
+          code={HeaderFourCode}
         />
       </div>
     </div>
