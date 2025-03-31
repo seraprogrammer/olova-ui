@@ -31,11 +31,14 @@ const CodeExample = ({
   useEffect(() => {
     // Fetch the code from the markdown file
     fetch(codePath)
-      .then((response) =>
-        response.ok
-          ? response.text()
-          : Promise.reject(`Failed to load: ${response.statusText}`)
-      )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Failed to load: ${response.status} ${response.statusText}`
+          );
+        }
+        return response.text();
+      })
       .then((text) => {
         // Extract code blocks from markdown if it's a markdown file
         if (codePath.endsWith(".md")) {
@@ -62,12 +65,13 @@ const CodeExample = ({
             if (anyCodeBlocks && anyCodeBlocks.length > 0) {
               // Extract content from the first code block found
               const extractedCode = anyCodeBlocks[0]
-                .replace(/^```\w*\s*/, "")
+                .replace(/^```\s*\w*\s*/, "") // More flexible regex to handle various formats
                 .replace(/```\s*$/, "")
                 .trim();
 
               setCode(extractedCode);
             } else {
+              console.log("No code blocks found in markdown:", text);
               setCode("// No code blocks found in the markdown file");
             }
           }
@@ -84,9 +88,7 @@ const CodeExample = ({
       })
       .catch((error) => {
         console.error("Error loading code example:", error);
-        setCode(
-          `// Error loading code example: ${error.message || "Unknown error"}`
-        );
+        setCode(`// Error loading code example: ${error.toString()}`);
       });
   }, [codePath, language]);
 
